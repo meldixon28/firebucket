@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fire Bucket Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f9f3e4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #b22222;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            margin: 50px auto;
+            border: 2px solid #555;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        #fire {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            background: url('C:/Users/DIXON/OneDrive - Kingston University/FIRE BUCKET GAME/fire.png') no-repeat center center;
+            background-size: cover;
+        }
+
+        #bucket {
+            position: absolute;
+            bottom: 10px;
+            left: 10%;
+            width: 60px;
+            height: 60px;
+            background: url('C:/Users/DIXON/OneDrive - Kingston University/FIRE BUCKET GAME/bucket.png') no-repeat center center;
+            background-size: cover;
+            cursor: pointer;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Save Ham House: Fire Bucket Game by Melrose Dixon</h1>
+    <div id="game-container">
+        <div id="fire"></div>
+        <div id="bucket"></div>
+    </div>
+    <div id="message">Drag the bucket near the fire to extinguish it!</div>
+    <button onclick="restartGame()">Restart Game</button>
+
+    <script>
+        const fire = document.getElementById('fire');
+        const bucket = document.getElementById('bucket');
+        const message = document.getElementById('message');
+
+        let isDragging = false;
+
+        bucket.addEventListener('mousedown', () => {
+            isDragging = true;
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (isDragging) {
+                const fireRect = fire.getBoundingClientRect();
+                const bucketRect = bucket.getBoundingClientRect();
+
+                if (
+                    bucketRect.left < fireRect.right &&
+                    bucketRect.right > fireRect.left &&
+                    bucketRect.top < fireRect.bottom &&
+                    bucketRect.bottom > fireRect.top
+                ) {
+                    fire.style.display = 'none';
+                    message.textContent = 'Well done! You saved Ham House!';
+                } else {
+                    message.textContent = 'Try again! Drag the bucket closer to the fire.';
+                }
+            }
+            isDragging = false;
+        });
+
+        window.addEventListener('mousemove', (event) => {
+            if (isDragging) {
+                const containerRect = document.getElementById('game-container').getBoundingClientRect();
+                const bucketWidth = bucket.offsetWidth;
+                const bucketHeight = bucket.offsetHeight;
+
+                let newLeft = event.clientX - bucketWidth / 2;
+                let newTop = event.clientY - bucketHeight / 2;
+
+                // Prevent bucket from going outside the container
+                if (newLeft < containerRect.left) newLeft = containerRect.left;
+                if (newLeft + bucketWidth > containerRect.right) newLeft = containerRect.right - bucketWidth;
+                if (newTop < containerRect.top) newTop = containerRect.top;
+                if (newTop + bucketHeight > containerRect.bottom) newTop = containerRect.bottom - bucketHeight;
+
+                bucket.style.left = `${newLeft - containerRect.left}px`;
+                bucket.style.top = `${newTop - containerRect.top}px`;
+            }
+        });
+
+        function restartGame() {
+            fire.style.display = 'block';
+            message.textContent = 'Drag the bucket near the fire to extinguish it!';
+            bucket.style.left = '10%';
+            bucket.style.bottom = '10px';
+            bucket.style.top = '';
+        }
+    </script>
+</body>
+</html>
